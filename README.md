@@ -37,7 +37,7 @@ Dự án này là một hệ thống phân tích hợp đồng tự động, s�
 
 ## 🚀 Cài đặt và Sử dụng
 
-### Tùy chọn 1: Chạy với Docker (Khuyến nghị)
+### Chạy với Docker
 
 #### Yêu cầu:
 - Docker Desktop
@@ -87,51 +87,6 @@ docker exec -it kaggle-automation bash
 python3 run_kaggle_notebook_docker.py -u "your_email@gmail.com" -p "your_password" -n "username/notebook-name" -g T4
 ```
 
-### Tùy chọn 2: Chạy trực tiếp (Local)
-
-#### Yêu cầu:
-- Python 3.8+
-- Windows 10/11 (có thể chạy trên Linux)
-- Firefox browser
-- Kết nối internet ổn định
-
-#### Bước 1: Tạo virtual environment
-```powershell
-# Tạo virtual environment
-python -m venv venv
-
-# Kích hoạt virtual environment
-.\venv\Scripts\Activate.ps1
-
-# Nếu gặp lỗi execution policy:
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-#### Bước 2: Cài đặt dependencies
-```powershell
-# Cập nhật pip
-python -m pip install --upgrade pip
-
-# Cài đặt packages
-pip install -r requirements.txt
-```
-
-#### Bước 3: Cài đặt Firefox
-1. Tải và cài đặt Firefox từ: https://www.mozilla.org/firefox/
-2. Kiểm tra đường dẫn cài đặt (thường là `C:\Program Files\Mozilla Firefox\firefox.exe`)
-
-#### Bước 4: Cấu hình
-Mở file `run_kaggle_notebook.py` và cập nhật:
-```python
-# Dòng 28
-options.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
-```
-
-#### Bước 5: Chạy automation
-```powershell
-python main.py
-```
-
 ## ⚙️ Cấu hình chi tiết
 
 ### 1. Cấu hình Kaggle (main.py)
@@ -158,25 +113,43 @@ PASSWORD = "your_app_password"  # App password, không phải password thường
 SERVER_URL = "https://your-ngrok-url.ngrok-free.app"
 ```
 
-## 🐳 Docker - Hiểu về Volume
+## �️ Dọn dẹp Docker (Tùy chọn)
 
-**Volume** là cầu nối giữa container và máy tính của bạn:
+Nếu bạn muốn bắt đầu từ đầu hoặc gặp lỗi, có thể dọn dẹp tất cả Docker:
 
+### ⚠️ Cảnh báo: Lệnh này sẽ xóa TẤT CẢ containers, images, networks và volumes!
+
+```powershell
+# Dừng tất cả containers đang chạy
+docker stop $(docker ps -aq)
+
+# Xóa tất cả containers
+docker rm $(docker ps -aq)
+
+# Xóa tất cả images
+docker rmi $(docker images -q)
+
+# Xóa tất cả volumes
+docker volume prune -f
+
+# Xóa tất cả networks
+docker network prune -f
+
+# Dọn dẹp hoàn toàn hệ thống
+docker system prune -a --volumes -f
+```
+
+### Dọn dẹp chỉ project này:
 ```bash
--v ./files:/app/files
-```
+# Dừng và xóa container kaggle-automation
+docker stop kaggle-automation
+docker rm kaggle-automation
 
-- `./files` = Thư mục trên máy Windows của bạn
-- `:/app/files` = Thư mục bên trong container
-- **Lợi ích**: Dữ liệu không bị mất khi container bị xóa
+# Xóa image kaggle-automation
+docker rmi kaggle-automation
 
-### Minh họa:
-```
-Máy Windows của bạn          Docker Container
-├── files/                   ├── /app/files/  ← Cùng dữ liệu
-│   ├── file1.pdf           │   ├── file1.pdf
-│   └── results/            │   └── results/
-└── processed_files.csv     └── processed_files.csv
+# Với Docker Compose
+docker-compose down --rmi all --volumes
 ```
 
 ## 🔧 Sử dụng nâng cao

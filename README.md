@@ -4,7 +4,54 @@ Hệ thống phân tích hợp đồng tự động sử dụng AI cho PVCFC, h�
 
 ## 📋 Mô tả
 
-Dự án này là một hệ thống phân tích hợp đồng tự động, sử dụng các mô hình AI để trích xuất và phân tích thông tin từ các file PDF hợp đồng. Hệ thống bao gồm:
+Dự án này là một hệ thống pSERVER_URL = "https://your-ngrok-url.ngrok-free.app"
+```
+
+## 🚀 Workflow thường dùng
+
+### Lần đầu setup:
+```powershell
+# 1. Khởi tạo dữ liệu
+.\init_data.ps1
+
+# 2. Build image
+docker build -t kaggle-automation .
+
+# 3. Chạy container
+.\run_docker.bat
+
+# 4. Cấu hình main.py
+code main.py  # Sửa thông tin Kaggle
+
+# 5. Chạy automation
+docker exec -it kaggle-automation python3 main.py
+```
+
+### Sử dụng hàng ngày:
+```powershell
+# Chạy automation
+docker exec -it kaggle-automation python3 main.py
+
+# Xem logs
+docker logs kaggle-automation
+
+# Kiểm tra file results
+docker exec -it kaggle-automation ls -la /app/files/results/
+```
+
+### Khi cần thay đổi cấu hình:
+```powershell
+# 1. Sửa main.py
+code main.py
+
+# 2. Restart container
+docker restart kaggle-automation
+
+# 3. Chạy lại
+docker exec -it kaggle-automation python3 main.py
+```
+
+## 🗑️ Dọn dẹp Docker (Tùy chọn)tích hợp đồng tự động, sử dụng các mô hình AI để trích xuất và phân tích thông tin từ các file PDF hợp đồng. Hệ thống bao gồm:
 
 - **Server AI**: Xử lý PDF và phân tích nội dung bằng VLM (Vision Language Model) và LLM
 - **Client Web**: Giao diện web để upload và xử lý file
@@ -79,12 +126,72 @@ docker run -d `
 - **VNC Client**: localhost:5900
 
 #### Bước 5: Chạy automation
+
+##### Cách 1: Chạy main.py (Khuyến nghị)
 ```bash
 # Vào container
 docker exec -it kaggle-automation bash
 
-# Chạy script
+# Chạy main.py
+python3 main.py
+```
+
+##### Cách 2: Chạy notebook riêng lẻ
+```bash
+# Vào container
+docker exec -it kaggle-automation bash
+
+# Chạy script notebook
 python3 run_kaggle_notebook_docker.py -u "your_email@gmail.com" -p "your_password" -n "username/notebook-name" -g T4
+```
+
+#### Bước 6: Cấu hình main.py
+
+##### Sửa file main.py từ bên ngoài container:
+```powershell
+# Mở file main.py với editor của bạn (VS Code, Notepad++, v.v.)
+code main.py
+
+# Hoặc
+notepad main.py
+```
+
+##### Sửa file main.py từ bên trong container:
+```bash
+# Vào container
+docker exec -it kaggle-automation bash
+
+# Sửa file với nano
+nano main.py
+
+# Hoặc với vi
+vi main.py
+```
+
+##### Cấu hình cần thiết trong main.py:
+```python
+# Thông tin tài khoản Kaggle
+KAGGLE_ACC_1 = {
+    "user": "your_email@gmail.com",           # Email Kaggle của bạn
+    "password": "your_password",               # Mật khẩu Kaggle
+    "notebook": "username/notebook-name"       # Đường dẫn notebook trên Kaggle
+}
+
+# API Key (nếu có)
+API_KEY = "your_api_key_here"
+
+# Lịch trình chạy
+SCHEDULE_HOUR = 19                    # 7 giờ tối
+RUN_MODE = "immediately"              # "immediately", "daily", hoặc "hourly"
+```
+
+##### Sau khi sửa xong, restart container:
+```bash
+# Thoát khỏi container (nếu đang ở trong)
+exit
+
+# Restart container để áp dụng thay đổi
+docker restart kaggle-automation
 ```
 
 ## ⚙️ Cấu hình chi tiết

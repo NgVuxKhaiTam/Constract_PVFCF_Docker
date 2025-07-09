@@ -4,7 +4,6 @@ Hệ thống phân tích hợp đồng tự động sử dụng AI cho PVCFC, h�
 
 ## 📋 Mô tả
 
-Dự án này là một hệ thống pSERVER_URL = "https://your-ngrok-url.ngrok-free.app"
 ```
 
 ## 🚀 Workflow thường dùng
